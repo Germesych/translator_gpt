@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML форма</title>
+</head>
+<body>
+<style>
+    .main {
+        display: flex;
+        gap: 30px;
+    }
+
+    .response-data {
+        margin-top: 50px;
+        padding: 20px;
+        width: 700px;
+        height: 625px;
+        overflow-y: auto;
+        border: 1px solid #000;
+        margin-bottom: 30px;
+    }
+
+    .input-wrapper {
+        margin-bottom: 25px;
+    }
+
+    .textarea {
+        width: 700px;
+        height: 650px;
+    }
+
+    .btn-submit {
+        padding: 7px 14px;
+        background: aqua;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    input, textarea {
+        padding: 7px;
+    }
+    .hidden-input {
+        position: absolute;
+        top: -100px;
+        left: -100px;
+        width: 0;
+        height: 0;
+    }
+    .button-copy {
+        padding: 7px 14px;
+        border-radius: 6px;
+        background: #40ae11;
+        font-size: 18px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+</style>
+<div class="main">
+  <div class="question-">
+    <p>
+    Перевод текста происходит не сразу! Будьте терпеливы, дождитесь ответа.
+    </p>
+    <p></p>
+    <form action="" method="post">
+      <div class="input-wrapper input__content">
+      <textarea class="textarea" name="content" id="question" cols="30" rows="10"
+                placeholder="Введите свой вопрос"></textarea>
+      </div>
+      <input class="btn-submit" type="submit" value="Отправить">
+    </form>
+  </div>
+  <div class="block">
+    <div class="response-data">
+    </div>
+    <textarea class="hidden-input"></textarea>
+    <button class="button-copy">Copy</button>
+  </div>
+
+</div>
+
+<script>
+    let dataObj = NaN
+
+    function submitForm(event) {
+        event.preventDefault()
+        document.querySelector('.btn-submit').disabled = true
+        const form = document.querySelector("form");
+        const content = form.querySelector("textarea[name='content']").value;
+
+        const data = new FormData();
+        data.append("content", content);
+
+        fetch("/submit", {
+            method: "POST",
+            body: data,
+        }).then((response) => {
+            if (response.ok) {
+                response.text().then(result => {
+                    res_data(result)
+                    document.querySelector('.btn-submit').disabled = false
+                })
+            } else {
+                alert("Произошла ошибка!");
+            }
+        });
+    }
+
+    function res_data(data) {
+        document.querySelector('.response-data').innerHTML = data
+    }
+
+    function copyText(){
+        let hiddenInput = document.querySelector('.hidden-input')
+        const text = document.querySelector('.response-data').innerText
+        hiddenInput.textContent = text
+        hiddenInput.select();
+        document.execCommand("copy");
+    }
+    document.querySelector('.button-copy').addEventListener('click', ()=>{
+        copyText()
+    })
+
+    document.querySelector("input[type='submit']").addEventListener("click", submitForm);
+</script>
+</body>
+</html>
+

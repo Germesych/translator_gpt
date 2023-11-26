@@ -1,1 +1,1 @@
-# translator_gpt
+# Translator GPT
